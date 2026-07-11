@@ -13,8 +13,8 @@ wordmark sits at the upper left, a narrow tartan band runs across the top and
 bottom, and two thin rules divide the page into three working areas. The default
 page is international A0 landscape, 1189 × 841 mm. Portrait A0 is also supported.
 
-(plain words: `main.tex` holds the poster; `branding.tex` holds the rules that
-keep the poster looking like one system.)
+(plain words: `main.tex` starts the build; `modules/poster.tex` holds the poster;
+`branding.tex` holds the rules that keep the poster looking like one system.)
 
 ## What the Template Gives You
 
@@ -33,8 +33,17 @@ keep the poster looking like one system.)
 
 ```text
 .
-├── main.tex                         poster metadata, logos, and content
+├── main.tex                         small entry point and orientation switch
 ├── branding.tex                     page, type, color, spacing, and layout rules
+├── modules/
+│   ├── poster.tex                   assembles the independent modules
+│   ├── metadata.tex                 title, authors, affiliations, and contact
+│   ├── institutions.tex             institution, partner, and sponsor logos
+│   ├── columns/
+│   │   ├── left.tex                 left-column reading order
+│   │   ├── center.tex               center-column reading order
+│   │   └── right.tex                right-column reading order
+│   └── sections/                    one file per main poster section
 ├── references.bib                   numbered BibTeX references
 ├── Makefile                         landscape, portrait, and cleanup commands
 ├── logos/
@@ -62,7 +71,7 @@ clear than to repair a crowded page at the printer.
 
 ## Pass 1: Name the Work
 
-Edit the metadata near the top of `main.tex`:
+Edit the metadata in `modules/metadata.tex`:
 
 ```tex
 \PosterTitle{A Clear, Specific Research Title}
@@ -78,7 +87,8 @@ the superscripts; do not make the reader decode them.
 
 ### Add Institution Logos
 
-Add one command for every approved institution, partner, or sponsor mark:
+In `modules/institutions.tex`, add one command for every approved institution,
+partner, or sponsor mark:
 
 ```tex
 \AddInstitutionLogo{logos/university-a.pdf}
@@ -114,8 +124,8 @@ draft box rather than stopping compilation; replace that box before printing.
 
 ## Pass 2: Build the Story
 
-`\SimplePosterColumns` takes three arguments: left column, middle column, right
-column. The demonstration uses this progression:
+The three files under `modules/columns/` define the reading order. Each one loads
+its content from `modules/sections/`. The demonstration uses this progression:
 
 1. **Background:** what problem exists, why it matters, and what the work asks.
 2. **Our Solution:** what was designed, measured, or tested, and how.
@@ -124,6 +134,11 @@ column. The demonstration uses this progression:
 Use `\PosterSection{...}` for the main turns in the story and
 `\PosterSubsection{...}` for supporting ideas. Keep an ordinary section near
 80–120 words and a list near three to five bullets.
+
+To move a section, move its `\input{modules/sections/...}` line from one column
+file to another. To remove a section, comment out that line. To create a new
+section, add a `.tex` file under `modules/sections/` and input it from the desired
+column. (plain words: section files hold ideas; column files decide the order.)
 
 If You’re Stuck. Write one sentence for each of these: the problem, the method,
 the strongest result, the limitation, and the conclusion. Put those five

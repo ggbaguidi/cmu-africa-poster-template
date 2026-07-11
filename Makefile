@@ -1,10 +1,11 @@
 LATEX = lualatex
+MODULES = $(wildcard modules/*.tex modules/columns/*.tex modules/sections/*.tex)
 
 .PHONY: all landscape portrait clean
 
 all: main.pdf
 
-main.pdf: main.tex branding.tex references.bib
+main.pdf: main.tex branding.tex $(MODULES) references.bib
 	$(LATEX) -interaction=nonstopmode -halt-on-error main.tex
 	bibtex main
 	$(LATEX) -interaction=nonstopmode -halt-on-error main.tex

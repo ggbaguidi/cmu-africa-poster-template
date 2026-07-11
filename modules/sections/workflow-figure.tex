@@ -1,0 +1,16 @@
+% Workflow figure: replace the example nodes with the research pipeline.
+\vspace{8mm}
+\begin{center}
+  \resizebox{.96\linewidth}{!}{\begin{tikzpicture}[x=1mm,y=1mm,>=stealth]
+    \tikzset{stage/.style={draw=CMUBlack,rounded corners=1mm,
+      minimum width=72mm,minimum height=30mm,align=center,
+      font=\fontsize{20}{24}\selectfont}}
+    \node[stage] (a) at (38,0) {Data};
+    \node[stage] (b) at (132,0) {Method};
+    \node[stage] (c) at (226,0) {Evaluation};
+    \draw[->,line width=1.2pt] (a)--(b);
+    \draw[->,line width=1.2pt] (b)--(c);
+  \end{tikzpicture}}
+  \captionof{figure}{Example workflow. Replace this with the research pipeline.}
+\end{center}
+

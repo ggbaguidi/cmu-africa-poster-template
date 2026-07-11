@@ -1,0 +1,16 @@
+% modules/poster.tex -- assembles the independent poster modules.
+
+% Identity and logo modules are loaded in the preamble.
+\input{modules/metadata}
+\input{modules/institutions}
+
+% main.tex calls this command inside the document environment.
+\newcommand{\BuildPoster}{%
+  \MakeSimpleHeader
+  \vspace{3mm}
+  \SimplePosterColumns
+    {\input{modules/columns/left}}
+    {\input{modules/columns/center}}
+    {\input{modules/columns/right}}%
+}
+

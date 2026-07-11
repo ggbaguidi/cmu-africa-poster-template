@@ -13,7 +13,8 @@ Program at CMU-Africa. The poster includes it proportionally at the upper left.
 
 ## Add a Logo
 
-Place the approved file in this folder, then register it in `main.tex`:
+Place the approved file in this folder, then register it in
+`modules/institutions.tex`:
 
 ```tex
 \AddInstitutionLogo{logos/partner-university.pdf}
@@ -26,8 +27,8 @@ in the reserved row automatically. For an unusually wide mark:
 \AddInstitutionLogo[50mm]{logos/wide-funder.pdf}
 ```
 
-(plain words: add files here; add commands in `main.tex`; let `branding.tex` do
-the arithmetic.)
+(plain words: add files here; add commands in `modules/institutions.tex`; let
+`branding.tex` do the arithmetic.)
 
 ## Rules
 

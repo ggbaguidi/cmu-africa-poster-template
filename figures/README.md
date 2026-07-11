@@ -19,7 +19,8 @@ beside it so the provenance remains visible.
 
 ## Add a Figure
 
-Place the file here, then include it from `main.tex`:
+Place the file here, then include it from the relevant file under
+`modules/sections/`:
 
 ```tex
 \includegraphics[width=\linewidth]{figures/result-plot.pdf}

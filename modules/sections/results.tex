@@ -1,0 +1,33 @@
+% Results: strongest claim first, followed by the evidence that supports it.
+\PosterSection{Results}
+
+Put the most important quantitative or qualitative finding first.
+
+\begin{center}
+  \resizebox{.96\linewidth}{!}{\begin{tikzpicture}[x=1mm,y=1mm]
+    \draw[->,line width=1pt] (0,0)--(265,0);
+    \draw[->,line width=1pt] (0,0)--(0,115);
+    \foreach \x/\a/\b in {45/72/94,130/61/86,215/80/105}{
+      \fill[IronGray] (\x-23,0) rectangle (\x,\a);
+      \fill[CarnegieRed] (\x+4,0) rectangle (\x+27,\b);
+    }
+    \node[fill=IronGray,minimum width=12mm,minimum height=7mm] at (78,132) {};
+    \node[anchor=west,font=\PosterCaptionFont] at (88,132) {Baseline};
+    \node[fill=CarnegieRed,minimum width=12mm,minimum height=7mm] at (180,132) {};
+    \node[anchor=west,font=\PosterCaptionFont] at (190,132) {Proposed};
+  \end{tikzpicture}}
+  \captionof{figure}{Example result. Report uncertainty and the sample size.}
+\end{center}
+
+\begin{center}
+  \begin{tabularx}{\linewidth}{>{\bfseries}X r r}
+    \toprule
+    Method & Metric 1 & Metric 2\\
+    \midrule
+    Baseline & 0.71 & 42 ms\\
+    Proposed & \textcolor{CarnegieRed}{\bfseries 0.86} & 18 ms\\
+    \bottomrule
+  \end{tabularx}
+  \captionof{table}{Use a small table only when exact values matter.}
+\end{center}
+
