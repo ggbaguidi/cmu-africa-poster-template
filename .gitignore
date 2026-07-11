@@ -1,0 +1,11 @@
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+main-landscape.pdf
+main-portrait.pdf
+main-blx.bib

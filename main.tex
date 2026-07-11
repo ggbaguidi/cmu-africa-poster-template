@@ -1,0 +1,154 @@
+% main.tex -- simple CMU-Africa A0 academic poster.
+% Compile with LuaLaTeX. Use \posterlandscapefalse for portrait A0.
+\documentclass[10pt]{article}
+
+\newif\ifposterlandscape
+\posterlandscapetrue
+
+\input{branding}
+
+% ---------- Poster metadata ----------
+\PosterTitle{Title}
+\PosterAuthors{Barry Rawn\textsuperscript{1}}
+\PosterAffiliations{\textsuperscript{1}Carnegie Mellon University Africa, Kigali, Rwanda}
+\PosterContact{}
+
+% ---------- Additional institution / sponsor logos ----------
+% Add one line per logo. The template counts and spaces them automatically in a
+% dedicated row below the affiliations; title and columns remain fixed.
+% Only use approved, unmodified logo files. Examples:
+\AddInstitutionLogo{logos/upanzi-logo-new.png}
+\AddInstitutionLogo{logos/cmu-africa-wordmark.png}
+\AddInstitutionLogo{logos/upanzi-logo-new.png}
+% \AddInstitutionLogo{logos/institution-b.pdf}
+% \AddInstitutionLogo[50mm]{logos/sponsor-with-unusual-proportions.pdf}
+%
+% Optional row controls (the defaults work well for 1--6 logos):
+% \SetInstitutionLogoRowWidth{520mm}
+% \SetInstitutionLogoGap{12mm}
+% \SetInstitutionLogoMaxSize{72mm}{23mm} % maximum width and height
+
+\begin{document}
+\pagestyle{empty}
+\color{CMUBlack}
+\PosterBodyFont
+\MakeSimpleHeader
+\vspace{3mm}
+
+\SimplePosterColumns{
+  % ==================== LEFT COLUMN ====================
+  \PosterSection{Background}
+
+  Introduce the research problem and explain why it matters. Keep this section
+  concise and lead with the central motivation. A useful target is 80--120 words.
+  Cite only the most relevant prior work \cite{guo2017calibration,mitchell2019modelcards}.
+
+  \PosterSubsection{Objectives}
+  \begin{itemize}
+    \item State the primary research question.
+    \item Identify the population, system, or setting.
+    \item Summarize the expected contribution.
+  \end{itemize}
+
+  \vspace{12mm}
+  \FigurePlaceholder[120mm]{Context photograph, conceptual diagram,\\or motivating data visualization}
+  \captionof{figure}{Use vector PDF for diagrams and 300 ppi images for photographs.}
+
+  \vfill
+  \PosterSubsection{Contact}
+  name@andrew.cmu.edu\quad |\quad project.example.org
+}{
+  % ==================== MIDDLE COLUMN ====================
+  \PosterSection{Our Solution}
+
+  Describe the proposed method, intervention, model, or study design. Use a
+  diagram whenever it communicates the workflow more quickly than prose.
+
+  \PosterSubsection{Methodology}
+  \begin{enumerate}
+    \item Collect and clean the study data.
+    \item Train or implement the proposed approach.
+    \item Evaluate on a participant-held-out test set.
+  \end{enumerate}
+
+  \vspace{8mm}
+  \begin{center}
+    \resizebox{.96\linewidth}{!}{\begin{tikzpicture}[x=1mm,y=1mm,>=stealth]
+      \tikzset{stage/.style={draw=CMUBlack,rounded corners=1mm,
+        minimum width=72mm,minimum height=30mm,align=center,
+        font=\fontsize{20}{24}\selectfont}}
+      \node[stage] (a) at (38,0) {Data};
+      \node[stage] (b) at (132,0) {Method};
+      \node[stage] (c) at (226,0) {Evaluation};
+      \draw[->,line width=1.2pt] (a)--(b);
+      \draw[->,line width=1.2pt] (b)--(c);
+    \end{tikzpicture}}
+    \captionof{figure}{Example workflow. Replace this with the research pipeline.}
+  \end{center}
+
+  \PosterSubsection{Mathematical Formulation}
+  Equations can be included directly:
+  \[
+    \widehat{\theta}=\arg\min_{\theta}
+    \frac{1}{n}\sum_{i=1}^{n}\mathcal{L}(f_{\theta}(x_i),y_i)
+    +\lambda\lVert\theta\rVert_2^2.
+  \]
+
+  \vfill
+  \PosterSubsection{Implementation}
+  Add reproducibility details, hardware, software, ethical approval, or a short
+  data-availability statement here.
+}{
+  % ==================== RIGHT COLUMN ====================
+  \PosterSection{Results}
+
+  Put the most important quantitative or qualitative finding first.
+
+  \begin{center}
+    \resizebox{.96\linewidth}{!}{\begin{tikzpicture}[x=1mm,y=1mm]
+      \draw[->,line width=1pt] (0,0)--(265,0);
+      \draw[->,line width=1pt] (0,0)--(0,115);
+      \foreach \x/\a/\b in {45/72/94,130/61/86,215/80/105}{
+        \fill[IronGray] (\x-23,0) rectangle (\x,\a);
+        \fill[CarnegieRed] (\x+4,0) rectangle (\x+27,\b);
+      }
+      \node[fill=IronGray,minimum width=12mm,minimum height=7mm] at (78,132) {};
+      \node[anchor=west,font=\PosterCaptionFont] at (88,132) {Baseline};
+      \node[fill=CarnegieRed,minimum width=12mm,minimum height=7mm] at (180,132) {};
+      \node[anchor=west,font=\PosterCaptionFont] at (190,132) {Proposed};
+    \end{tikzpicture}}
+    \captionof{figure}{Example result. Report uncertainty and the sample size.}
+  \end{center}
+
+  \begin{center}
+    \begin{tabularx}{\linewidth}{>{\bfseries}X r r}
+      \toprule
+      Method & Metric 1 & Metric 2\\
+      \midrule
+      Baseline & 0.71 & 42 ms\\
+      Proposed & \textcolor{CarnegieRed}{\bfseries 0.86} & 18 ms\\
+      \bottomrule
+    \end{tabularx}
+    \captionof{table}{Use a small table only when exact values matter.}
+  \end{center}
+
+  \PosterSection{Future Research}
+  \begin{itemize}
+    \item Validate prospectively in additional settings.
+    \item Evaluate subgroup performance and robustness.
+    \item Study long-term operational outcomes.
+  \end{itemize}
+
+  \PosterSection{References}
+  {\PosterSmallFont
+    \bibliographystyle{unsrtnat}
+    \renewcommand{\section}[2]{}% suppress the normal bibliography heading
+    \bibliography{references}
+  }
+
+  \vfill
+  \PosterSubsection{Acknowledgments}
+  Acknowledge participants, collaborators, funders, and approved sponsors.
+}
+
+\end{document}

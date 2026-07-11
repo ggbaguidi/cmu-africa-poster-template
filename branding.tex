@@ -1,0 +1,281 @@
+% branding.tex -- simple CMU-Africa poster layout inspired by the .pptx template
+% provided during the English Enhancement Program at CMU-Africa.
+% Compile with LuaLaTeX. Public customization commands are documented below.
+
+% ---------- Exact ISO A0 page ----------
+\ifposterlandscape
+  \usepackage[paperwidth=1189mm,paperheight=841mm,margin=18mm]{geometry}
+\else
+  \usepackage[paperwidth=841mm,paperheight=1189mm,margin=18mm]{geometry}
+\fi
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{booktabs,tabularx,array}
+\usepackage{caption}
+\usepackage{qrcode}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- CMU colors ----------
+\definecolor{CarnegieRed}{HTML}{C41230}
+\definecolor{CMUBlack}{HTML}{000000}
+\definecolor{IronGray}{HTML}{6D6E71}
+\definecolor{SteelGray}{HTML}{E0E0E0}
+\definecolor{PaperWhite}{HTML}{FFFFFF}
+
+% ---------- Typography ----------
+% CMU's primary sans serif is Open Sans. TeX Gyre Heros is the fallback.
+\IfFontExistsTF{Open Sans}{
+  \setmainfont{Open Sans}[Ligatures=TeX]
+  \setsansfont{Open Sans}[Ligatures=TeX]
+}{
+  \setmainfont{TeX Gyre Heros}[Ligatures=TeX]
+  \setsansfont{TeX Gyre Heros}[Ligatures=TeX]
+}
+\setmathfont{Latin Modern Math}
+\renewcommand{\familydefault}{\sfdefault}
+
+% Recommended A0 ranges: title 60--84 pt, headings 32--44 pt,
+% body 24--32 pt, captions and references at least 18--22 pt.
+\newcommand{\PosterTitleFont}{\fontsize{66}{72}\selectfont\bfseries}
+\newcommand{\PosterAuthorFont}{\fontsize{27}{33}\selectfont}
+\newcommand{\PosterAffiliationFont}{\fontsize{23}{28}\selectfont}
+\newcommand{\PosterSectionFont}{\fontsize{36}{42}\selectfont\bfseries}
+\newcommand{\PosterSubsectionFont}{\fontsize{29}{35}\selectfont\bfseries}
+\newcommand{\PosterBodyFont}{\fontsize{25}{31}\selectfont}
+\newcommand{\PosterCaptionFont}{\fontsize{19}{23}\selectfont}
+\newcommand{\PosterSmallFont}{\fontsize{18}{22}\selectfont}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.42em}
+% Ignore only sub-point rounding in the three-column width calculation.
+\hfuzz=2pt
+\setlist[itemize]{leftmargin=1.15em,itemsep=.16em,topsep=.2em}
+\setlist[enumerate]{leftmargin=1.25em,itemsep=.16em,topsep=.2em}
+\captionsetup{font={small},labelfont=bf,justification=raggedright,
+  singlelinecheck=false,hypcap=false}
+\DeclareCaptionFont{small}{\PosterCaptionFont}
+
+% ---------- Metadata ----------
+\newcommand{\ThePosterTitle}{Poster Title}
+\newcommand{\ThePosterAuthors}{Author Name\textsuperscript{1}}
+\newcommand{\ThePosterAffiliations}{\textsuperscript{1}Carnegie Mellon University Africa, Kigali, Rwanda}
+\newcommand{\ThePosterContact}{}
+\newcommand{\PosterTitle}[1]{\renewcommand{\ThePosterTitle}{#1}}
+\newcommand{\PosterAuthors}[1]{\renewcommand{\ThePosterAuthors}{#1}}
+\newcommand{\PosterAffiliations}[1]{\renewcommand{\ThePosterAffiliations}{#1}}
+\newcommand{\PosterContact}[1]{\renewcommand{\ThePosterContact}{#1}}
+
+% Individual logo helper. Each supplied file is included proportionally and is
+% never cropped, recolored, or reconstructed.
+\newcommand{\InstitutionLogo}[2][55mm]{%
+  \IfFileExists{#2}{\includegraphics[width=#1,height=25mm,keepaspectratio]{#2}}{%
+    \fbox{\parbox[c][20mm][c]{#1}{\centering\PosterSmallFont Missing logo\\\texttt{#2}}}%
+  }%
+}
+
+% ---------- Automatically managed institutional-logo row ----------
+% Preferred usage in main.tex:
+%   \AddInstitutionLogo{logos/institution-a.pdf}
+%   \AddInstitutionLogo{logos/institution-b.pdf}
+% The number of logos is detected automatically. They are evenly distributed in
+% a reserved header row, so the title and columns never move. The optional width
+% overrides automatic sizing for an unusually narrow or wide mark:
+%   \AddInstitutionLogo[52mm]{logos/sponsor.pdf}
+\ExplSyntaxOn
+\seq_new:N \g_cmu_institution_logos_seq
+\dim_new:N \g_cmu_logo_row_width_dim
+\dim_new:N \g_cmu_logo_gap_dim
+\dim_new:N \g_cmu_logo_max_width_dim
+\dim_new:N \g_cmu_logo_max_height_dim
+\dim_new:N \l_cmu_logo_auto_width_dim
+\dim_gset:Nn \g_cmu_logo_row_width_dim { 520mm }
+\dim_gset:Nn \g_cmu_logo_gap_dim { 12mm }
+\dim_gset:Nn \g_cmu_logo_max_width_dim { 72mm }
+\dim_gset:Nn \g_cmu_logo_max_height_dim { 23mm }
+
+\NewDocumentCommand{\AddInstitutionLogo}{O{}m}
+  { \seq_gput_right:Nn \g_cmu_institution_logos_seq { \cmu_logo_item:nn {#1}{#2} } }
+\NewDocumentCommand{\ClearInstitutionLogos}{}
+  { \seq_gclear:N \g_cmu_institution_logos_seq }
+\NewDocumentCommand{\SetInstitutionLogoRowWidth}{m}
+  { \dim_gset:Nn \g_cmu_logo_row_width_dim {#1} }
+\NewDocumentCommand{\SetInstitutionLogoGap}{m}
+  { \dim_gset:Nn \g_cmu_logo_gap_dim {#1} }
+\NewDocumentCommand{\SetInstitutionLogoMaxSize}{mm}
+  {
+    \dim_gset:Nn \g_cmu_logo_max_width_dim {#1}
+    \dim_gset:Nn \g_cmu_logo_max_height_dim {#2}
+  }
+\NewExpandableDocumentCommand{\InstitutionLogoCount}{}
+  { \int_to_arabic:n { \seq_count:N \g_cmu_institution_logos_seq } }
+
+\cs_new_protected:Npn \cmu_logo_item:nn #1#2
+  {
+    \IfFileExists{#2}
+      {
+        \tl_if_blank:nTF {#1}
+          { \includegraphics[width=\l_cmu_logo_auto_width_dim,
+              height=\g_cmu_logo_max_height_dim,keepaspectratio]{#2} }
+          { \includegraphics[width=#1,height=\g_cmu_logo_max_height_dim,
+              keepaspectratio]{#2} }
+      }
+      {
+        \fbox{\parbox[c][18mm][c]{\l_cmu_logo_auto_width_dim}
+          {\centering\fontsize{14}{17}\selectfont Missing logo\\\texttt{#2}}}
+      }
+  }
+
+\cs_new_protected:Npn \cmu_print_institution_logos:
+  {
+    \int_compare:nNnT { \seq_count:N \g_cmu_institution_logos_seq } > { 0 }
+      {
+        \dim_set_eq:NN \l_cmu_logo_auto_width_dim
+          \g_cmu_logo_row_width_dim
+        \int_step_inline:nn
+          { \seq_count:N \g_cmu_institution_logos_seq - 1 }
+          { \dim_sub:Nn \l_cmu_logo_auto_width_dim { \g_cmu_logo_gap_dim } }
+        \dim_set:Nn \l_cmu_logo_auto_width_dim
+          {
+            \l_cmu_logo_auto_width_dim
+            / \int_eval:n { \seq_count:N \g_cmu_institution_logos_seq }
+          }
+        \dim_compare:nNnT { \l_cmu_logo_auto_width_dim } >
+          { \g_cmu_logo_max_width_dim }
+          { \dim_set_eq:NN \l_cmu_logo_auto_width_dim \g_cmu_logo_max_width_dim }
+        \hbox_to_wd:nn { \g_cmu_logo_row_width_dim }
+          {
+            \hfil
+            \seq_use:Nn \g_cmu_institution_logos_seq
+              { \hspace{\g_cmu_logo_gap_dim} }
+            \hfil
+          }
+      }
+  }
+\NewDocumentCommand{\PrintInstitutionLogos}{}
+  { \cmu_print_institution_logos: }
+\ExplSyntaxOff
+
+% ---------- Extracted brand artwork ----------
+% These PNGs were extracted from the .pptx template provided during the English
+% Enhancement Program at CMU-Africa. The CMU-Africa wordmark is used exactly as
+% embedded. The tartan source was only cropped to a repeatable horizontal strip;
+% the colors and artwork were not redrawn.
+\newcommand{\CMUAfricaWordmarkFile}{logos/cmu-africa-wordmark.png}
+\newcommand{\CMUTartanStripeFile}{figures/cmu-tartan-stripe.png}
+
+% Draw a thin tiled tartan stripe without stretching the pattern.
+\newcommand{\MakeBrandFrame}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % CMU-Africa wordmark, top left.
+    \node[anchor=north west,inner sep=0] at
+      ([xshift=10mm,yshift=-7mm]current page.north west)
+      {\includegraphics[width=205mm,keepaspectratio]{\CMUAfricaWordmarkFile}};
+
+    % Top stripe begins after the wordmark, matching the provided layout.
+    \begin{scope}
+      \clip ([xshift=230mm,yshift=-8mm]current page.north west)
+        rectangle ([xshift=-10mm,yshift=-15mm]current page.north east);
+      \foreach \x in {230,370,510,650,790,930,1070}{
+        \node[anchor=north west,inner sep=0] at
+          ([xshift=\x mm,yshift=-8mm]current page.north west)
+          {\includegraphics[width=140mm,height=6.6mm]{\CMUTartanStripeFile}};
+      }
+    \end{scope}
+
+    % Bottom stripe spans the complete page width.
+    \begin{scope}
+      \clip (current page.south west)
+        rectangle ([yshift=6.6mm]current page.south east);
+      \foreach \x in {0,140,280,420,560,700,840,980,1120}{
+        \node[anchor=south west,inner sep=0] at
+          ([xshift=\x mm]current page.south west)
+          {\includegraphics[width=140mm,height=6.6mm]{\CMUTartanStripeFile}};
+      }
+    \end{scope}
+
+    % Dedicated institutional-logo row. It remains empty when no logos are added.
+    \node[anchor=north,inner sep=0] at
+      ([yshift=-104mm]current page.north)
+      {\PrintInstitutionLogos};
+  \end{tikzpicture}%
+}
+
+% ---------- Header and section commands ----------
+\newcommand{\MakeSimpleHeader}{%
+  \MakeBrandFrame\par
+  \vspace*{27mm}
+  \noindent
+  \begin{minipage}[t][82mm][t]{\textwidth}
+    \centering
+    {\PosterTitleFont\ThePosterTitle\par}
+    \vspace{7mm}
+    {\PosterAuthorFont\ThePosterAuthors\par}
+    \vspace{3mm}
+    {\PosterAffiliationFont\ThePosterAffiliations\par}
+    \ifx\ThePosterContact\empty\else
+      \vspace{2mm}{\PosterAffiliationFont\ThePosterContact\par}
+    \fi
+  \end{minipage}%
+}
+
+\newcommand{\PosterSection}[1]{%
+  \par\vspace{1mm}{\PosterSectionFont #1\par}\vspace{4mm}%
+}
+\newcommand{\PosterSubsection}[1]{%
+  \par\vspace{5mm}{\PosterSubsectionFont #1\par}\vspace{2mm}%
+}
+
+% Three columns with thin black rules, as in the provided .pptx template.
+\newlength{\SimpleColumnGap}
+\setlength{\SimpleColumnGap}{22mm}
+\newlength{\SimpleRuleWidth}
+\setlength{\SimpleRuleWidth}{0.65mm}
+\newlength{\SimpleBodyHeight}
+\ifposterlandscape
+  \setlength{\SimpleBodyHeight}{650mm}
+\else
+  \setlength{\SimpleBodyHeight}{990mm}
+\fi
+
+\newcommand{\SimplePosterColumns}[3]{%
+  \noindent
+  \begin{minipage}[t][\SimpleBodyHeight][s]{\dimexpr(\textwidth-2\SimpleColumnGap-2\SimpleRuleWidth)/3-.6mm\relax}
+    \vspace{0pt}#1
+  \end{minipage}%
+  \hspace{\dimexpr\SimpleColumnGap/2\relax}%
+  \begin{minipage}[t][\SimpleBodyHeight][t]{\SimpleRuleWidth}
+    \vspace{0pt}\rule{\SimpleRuleWidth}{\SimpleBodyHeight}
+  \end{minipage}%
+  \hspace{\dimexpr\SimpleColumnGap/2\relax}%
+  \begin{minipage}[t][\SimpleBodyHeight][s]{\dimexpr(\textwidth-2\SimpleColumnGap-2\SimpleRuleWidth)/3-.6mm\relax}
+    \vspace{0pt}#2
+  \end{minipage}%
+  \hspace{\dimexpr\SimpleColumnGap/2\relax}%
+  \begin{minipage}[t][\SimpleBodyHeight][t]{\SimpleRuleWidth}
+    \vspace{0pt}\rule{\SimpleRuleWidth}{\SimpleBodyHeight}
+  \end{minipage}%
+  \hspace{\dimexpr\SimpleColumnGap/2\relax}%
+  \begin{minipage}[t][\SimpleBodyHeight][s]{\dimexpr(\textwidth-2\SimpleColumnGap-2\SimpleRuleWidth)/3-.6mm\relax}
+    \vspace{0pt}#3
+  \end{minipage}%
+}
+
+% Neutral figure placeholder; replace with \includegraphics for final posters.
+\newcommand{\FigurePlaceholder}[2][100mm]{%
+  \begin{center}
+    \begin{tikzpicture}
+      \draw[IronGray,dashed,line width=.7pt]
+        (0,0) rectangle (\linewidth,#1);
+      \node[align=center,text=IronGray,font=\PosterCaptionFont]
+        at (.5\linewidth,.5#1) {#2};
+    \end{tikzpicture}
+  \end{center}%
+}
