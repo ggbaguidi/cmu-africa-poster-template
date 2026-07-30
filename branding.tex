@@ -15,6 +15,7 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usepackage{utils/tikz-uml}
 \usepackage{booktabs,tabularx,array}
 \usepackage{caption}
 \usepackage{qrcode}
@@ -26,9 +27,21 @@
 % ---------- CMU colors ----------
 \definecolor{CarnegieRed}{HTML}{C41230}
 \definecolor{CMUBlack}{HTML}{000000}
-\definecolor{IronGray}{HTML}{6D6E71}
-\definecolor{SteelGray}{HTML}{E0E0E0}
 \definecolor{PaperWhite}{HTML}{FFFFFF}
+% Compatibility names deliberately resolve to the three-color poster palette.
+\colorlet{IronGray}{CMUBlack}
+\colorlet{SteelGray}{PaperWhite}
+
+% One visual language for every diagram built with the supplied tikz-uml.sty.
+\tikzumlset{text=CMUBlack,draw=CMUBlack,
+  font=\fontsize{20}{24}\selectfont,
+  fill class=PaperWhite,fill state=PaperWhite,fill note=PaperWhite}
+\tikzset{
+  tikzuml simpleclass style/.append style={rounded corners=2mm,
+    minimum height=20mm,line width=1pt},
+  tikzuml unidirectional association style/.append style={
+    draw=CarnegieRed,line width=1.4pt}
+}
 
 % ---------- Typography ----------
 % CMU's primary sans serif is Open Sans. TeX Gyre Heros is the fallback.
@@ -59,7 +72,7 @@
 \hfuzz=2pt
 \setlist[itemize]{leftmargin=1.15em,itemsep=.16em,topsep=.2em}
 \setlist[enumerate]{leftmargin=1.25em,itemsep=.16em,topsep=.2em}
-\captionsetup{font={small},labelfont=bf,justification=raggedright,
+\captionsetup{font={small},labelfont={bf,color=CarnegieRed},justification=raggedright,
   singlelinecheck=false,hypcap=false}
 \DeclareCaptionFont{small}{\PosterCaptionFont}
 
@@ -72,6 +85,34 @@
 \newcommand{\PosterAuthors}[1]{\renewcommand{\ThePosterAuthors}{#1}}
 \newcommand{\PosterAffiliations}[1]{\renewcommand{\ThePosterAffiliations}{#1}}
 \newcommand{\PosterContact}[1]{\renewcommand{\ThePosterContact}{#1}}
+
+% Robust empty-argument test for metadata fields.
+\newcommand{\cmuTempValue}{}
+\newcommand{\IfNonEmptyTF}[3]{%
+  \edef\cmuTempValue{#1}%
+  \if\relax\detokenize\expandafter{\cmuTempValue}\relax
+    #3%
+  \else
+    #2%
+  \fi
+}
+
+% Optional institution marks placed on the same line as the poster title.
+% Each side uses an equal-width box, so different logo proportions never move
+% the title away from the physical center of the page.
+\newcommand{\TheHeaderLeftInstitutionLogo}{}
+\newcommand{\TheHeaderRightInstitutionLogo}{}
+\newcommand{\SetHeaderInstitutionLogos}[2]{%
+  \renewcommand{\TheHeaderLeftInstitutionLogo}{#1}%
+  \renewcommand{\TheHeaderRightInstitutionLogo}{#2}%
+}
+\newcommand{\HeaderInstitutionLogo}[1]{%
+  \IfFileExists{#1}{%
+    \includegraphics[width=145mm,height=50mm,keepaspectratio]{#1}%
+  }{%
+    \fbox{\parbox[c][42mm][c]{135mm}{\centering\PosterSmallFont Missing logo\\\texttt{#1}}}%
+  }%
+}
 
 % Individual logo helper. Each supplied file is included proportionally and is
 % never cropped, recolored, or reconstructed.
@@ -201,10 +242,6 @@
       }
     \end{scope}
 
-    % Dedicated institutional-logo row. It remains empty when no logos are added.
-    \node[anchor=north,inner sep=0] at
-      ([yshift=-104mm]current page.north)
-      {\PrintInstitutionLogos};
   \end{tikzpicture}%
 }
 
@@ -215,19 +252,37 @@
   \noindent
   \begin{minipage}[t][82mm][t]{\textwidth}
     \centering
-    {\PosterTitleFont\ThePosterTitle\par}
-    \vspace{7mm}
+    \begin{minipage}[c][52mm][c]{155mm}
+      \centering
+      \IfNonEmptyTF{\TheHeaderLeftInstitutionLogo}
+        {\HeaderInstitutionLogo{\TheHeaderLeftInstitutionLogo}%
+        }{}
+    \end{minipage}%
+    \hspace{12mm}%
+    \begin{minipage}[c][52mm][c]{\dimexpr\textwidth-334mm\relax}
+      \centering
+      {\PosterTitleFont\ThePosterTitle\par}
+    \end{minipage}%
+    \hspace{12mm}%
+    \begin{minipage}[c][52mm][c]{155mm}
+      \centering
+      \IfNonEmptyTF{\TheHeaderRightInstitutionLogo}
+        {\HeaderInstitutionLogo{\TheHeaderRightInstitutionLogo}%
+        }{}
+    \end{minipage}\par
+    \vspace{2mm}
     {\PosterAuthorFont\ThePosterAuthors\par}
     \vspace{3mm}
     {\PosterAffiliationFont\ThePosterAffiliations\par}
-    \ifx\ThePosterContact\empty\else
-      \vspace{2mm}{\PosterAffiliationFont\ThePosterContact\par}
-    \fi
+    \IfNonEmptyTF{\ThePosterContact}
+      {\vspace{2mm}{\PosterAffiliationFont\ThePosterContact\par}}
+      {}
   \end{minipage}%
 }
 
 \newcommand{\PosterSection}[1]{%
-  \par\vspace{1mm}{\PosterSectionFont #1\par}\vspace{4mm}%
+  \par{\PosterSectionFont\textcolor{CMUBlack}{#1}\par}%
+  \vspace{0mm}{\color{CMUBlack}\rule{\linewidth}{.9mm}\par}\vspace{1.5mm}%
 }
 \newcommand{\PosterSubsection}[1]{%
   \par\vspace{5mm}{\PosterSubsectionFont #1\par}\vspace{2mm}%

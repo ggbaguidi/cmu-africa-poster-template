@@ -2,7 +2,12 @@
 
 % Identity and logo modules are loaded in the preamble.
 \input{modules/metadata}
-\input{modules/institutions}
+% Institution logos are optional. If the module is absent, compile the poster
+% with an empty institution row instead of stopping for a filename prompt.
+\InputIfFileExists{modules/institutions.tex}{}{%
+  \PackageWarningNoLine{cmu-africa-poster}{%
+    modules/institutions.tex not found; continuing without institution logos}%
+}
 
 % main.tex calls this command inside the document environment.
 \newcommand{\BuildPoster}{%
@@ -13,4 +18,3 @@
     {\input{modules/columns/center}}
     {\input{modules/columns/right}}%
 }
-
